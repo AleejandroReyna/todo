@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
-  Spinner
+  Spinner, 
+  Container, Row, Col,
+  ButtonGroup, Button
 } from 'react-bootstrap'
 
 function App() {
@@ -66,40 +68,57 @@ function App() {
 
   if(!loading) {
     return (
-      <div>
-        <button type="button" onClick={() => setFilter('pending')} disabled={filter === 'pending'}>Pending</button>
-        <button type="button" onClick={() => setFilter('all')} disabled={filter === 'all'}>All</button>
-        <button type="button" onClick={() => setFilter('completed')} disabled={filter === 'completed'}>Completed</button>
-        <br/>
-        <label htmlFor="">Show as Grid</label>
-        <input type="checkbox" onChange={e => setShowGrid(e.target.checked)} />
-        <br/>
-        <label htmlFor="">search: </label>
-        <input type="text" onChange={e => setFilterText(e.target.value)} value={filterText}/><br/>
-        <label htmlFor="">Add task: </label>
-        <input type="text" onChange={e => setNewItem(e.target.value)} value={newItem}/>
-        <button onClick={addItem} disabled={!newItem}>Add Todo</button><br/>
-        {!showGrid ?
-          <ul>
-            {
-              getTodos().map(todo =>
-                <li key={todo.id}>{ todo.id } - { todo.title }
-                    {!todo.completed &&
-                      <button onClick={e => completeItem(todo)}>Complete</button>
-                    }
-                    <button onClick={e => deleteItem(todo)}>Delete</button>
-                </li>
-              )
+      <Container>
+        <Row>
+          <Col>
+            <h1 className="mt-4 mb-4">My Todo</h1>
+            <ButtonGroup className="mb-4">
+              <Button variant="outline-secondary" onClick={() => setFilter('pending')} disabled={filter === 'pending'}>Pending</Button>
+              <Button variant="outline-secondary" onClick={() => setFilter('all')} disabled={filter === 'all'}>All</Button>
+              <Button variant="outline-secondary" onClick={() => setFilter('completed')} disabled={filter === 'completed'}>Completed</Button>
+            </ButtonGroup>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col>
+            <label htmlFor="">Show as Grid: </label>{' '}
+            <input type="checkbox" onChange={e => setShowGrid(e.target.checked)} />
+          </Col>
+          <Col>
+            <label htmlFor="">search: </label>
+            <input type="text" onChange={e => setFilterText(e.target.value)} value={filterText}/><br/>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col>
+            <label htmlFor="">Add task: </label>
+            <input type="text" onChange={e => setNewItem(e.target.value)} value={newItem}/>
+            <button onClick={addItem} disabled={!newItem}>Add Todo</button><br/>
+            {!showGrid ?
+              <ul>
+                {
+                  getTodos().map(todo =>
+                    <li key={todo.id}>{ todo.id } - { todo.title }
+                        {!todo.completed &&
+                          <button onClick={e => completeItem(todo)}>Complete</button>
+                        }
+                        <button onClick={e => deleteItem(todo)}>Delete</button>
+                    </li>
+                  )
+                }
+              </ul>
+            : 
+              <div style={{display: 'flex'}}>
+                {getTodos().map(todo => 
+                  <div key={todo.id}>{ todo.id } - { todo.title }</div>
+                )}
+              </div>
             }
-          </ul>
-        : 
-          <div style={{display: 'flex'}}>
-            {getTodos().map(todo => 
-              <div key={todo.id}>{ todo.id } - { todo.title }</div>
-            )}
-          </div>
-        }
-      </div>
+          </Col>
+        </Row>
+      </Container>
     )
   }
 
