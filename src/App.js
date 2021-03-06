@@ -146,9 +146,19 @@ function App() {
               </div>
             }
 
-            <label htmlFor="">Add task: </label>
-            <input type="text" onChange={e => setNewItem(e.target.value)} value={newItem}/>
-            <button onClick={addItem} disabled={!newItem}>Add Todo</button><br/>
+            <div>
+              <Form.Group className="d-flex flex-row">
+                <Form.Control 
+                  type="text" 
+                  onChange={e => setNewItem(e.target.value)} 
+                  value={newItem}
+                  placeholder="New Item..."/>
+                <Button 
+                  variant="primary" 
+                  style={{flexShrink: 0, marginLeft: '5px'}} 
+                  onClick={addItem} disabled={!newItem}>Add Todo</Button>
+              </Form.Group>
+            </div>
             
           </Col>
         </Row>
