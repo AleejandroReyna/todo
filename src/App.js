@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
-import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {
+  Spinner
+} from 'react-bootstrap'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -91,7 +94,7 @@ function App() {
           </ul>
         : 
           <div style={{display: 'flex'}}>
-            {todos.map(todo => 
+            {getTodos().map(todo => 
               <div key={todo.id}>{ todo.id } - { todo.title }</div>
             )}
           </div>
@@ -101,8 +104,8 @@ function App() {
   }
 
   return (
-    <div className="App">
-      loading...
+    <div className="spinner-container">
+      <Spinner animation="grow" variant="primary"/>
     </div>
   );
 }
