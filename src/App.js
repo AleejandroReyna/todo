@@ -81,9 +81,9 @@ function App() {
           <Col>
             <h1 className="mt-4 mb-4">My Todo</h1>
             <ButtonGroup className="mb-4">
-              <Button variant="outline-secondary" onClick={() => setFilter('pending')} disabled={filter === 'pending'}>Pending</Button>
-              <Button variant="outline-secondary" onClick={() => setFilter('all')} disabled={filter === 'all'}>All</Button>
-              <Button variant="outline-secondary" onClick={() => setFilter('completed')} disabled={filter === 'completed'}>Completed</Button>
+              <Button variant={filter === 'pending' ? "secondary" : "outline-secondary"} onClick={() => setFilter('pending')} disabled={filter === 'pending'}>Pending</Button>
+              <Button variant={filter === 'all' ? "secondary" : "outline-secondary"} onClick={() => setFilter('all')} disabled={filter === 'all'}>All</Button>
+              <Button variant={filter === 'completed' ? "secondary" : "outline-secondary"} onClick={() => setFilter('completed')} disabled={filter === 'completed'}>Completed</Button>
             </ButtonGroup>
           </Col>
         </Row>
