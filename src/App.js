@@ -5,7 +5,8 @@ import {
   Container, Row, Col,
   ButtonGroup, Button,
   Form,
-  Table
+  Table,
+  Card
 } from 'react-bootstrap'
 import {
   Trash,
@@ -139,11 +140,28 @@ function App() {
                 }
               </Table>
             : 
-              <div style={{display: 'flex'}}>
+              <Row>
                 {getTodos().map(todo => 
-                  <div key={todo.id}>{ todo.id } - { todo.title }</div>
+                  <Col sm={4} key={todo.id}>
+                    <Card className="mb-4">
+                      <Card.Header>
+                        <div className="d-flex justify-content-between align-items-center">
+                          { todo.id }
+                          <div>
+                            <Button variant="danger" onClick={e => deleteItem(todo)}><Trash /></Button>{' '}
+                            {!todo.completed &&
+                              <Button variant="success" onClick={e => completeItem(todo)}><Check /></Button>
+                            }
+                          </div>
+                        </div>
+                      </Card.Header>
+                      <Card.Body>
+                        { todo.title }
+                      </Card.Body>
+                    </Card>
+                  </Col>
                 )}
-              </div>
+              </Row>
             }
 
             <div>
