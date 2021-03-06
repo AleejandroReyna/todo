@@ -3,8 +3,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   Spinner, 
   Container, Row, Col,
-  ButtonGroup, Button
+  ButtonGroup, Button,
+  Form,
+  Table
 } from 'react-bootstrap'
+import {
+  Trash,
+  Check,
+  X
+} from 'react-bootstrap-icons'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -82,33 +89,55 @@ function App() {
 
         <Row>
           <Col>
-            <label htmlFor="">Show as Grid: </label>{' '}
-            <input type="checkbox" onChange={e => setShowGrid(e.target.checked)} />
+            <Form.Switch
+              label="Show as grid"
+              onChange={e => setShowGrid(e.target.checked)} 
+              value={showGrid}
+              id='grid-switch'
+              className="mb-4"
+             />
           </Col>
           <Col>
-            <label htmlFor="">search: </label>
-            <input type="text" onChange={e => setFilterText(e.target.value)} value={filterText}/><br/>
+            <Form.Control 
+              onChange={e => setFilterText(e.target.value)} 
+              value={filterText}
+              placeholder="Search..."
+              className="mb-4" />
           </Col>
         </Row>
 
         <Row>
           <Col>
-            <label htmlFor="">Add task: </label>
-            <input type="text" onChange={e => setNewItem(e.target.value)} value={newItem}/>
-            <button onClick={addItem} disabled={!newItem}>Add Todo</button><br/>
             {!showGrid ?
-              <ul>
+              <Table striped bordered hover size="sm">
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
                 {
                   getTodos().map(todo =>
-                    <li key={todo.id}>{ todo.id } - { todo.title }
-                        {!todo.completed &&
-                          <button onClick={e => completeItem(todo)}>Complete</button>
+                    <tr key={todo.id}>
+                      <td>{ todo.id }</td>
+                      <td>{ todo.title }</td>
+                      <td>
+                        { todo.completed ? 
+                          <Check />
+                        :
+                          <X />
                         }
-                        <button onClick={e => deleteItem(todo)}>Delete</button>
-                    </li>
+                        </td>
+                      <td>
+                        <Button variant="danger" onClick={e => deleteItem(todo)}><Trash /></Button>{' '}
+                        {!todo.completed &&
+                          <Button variant="success" onClick={e => completeItem(todo)}><Check /></Button>
+                        }
+                      </td>
+                    </tr>
                   )
                 }
-              </ul>
+              </Table>
             : 
               <div style={{display: 'flex'}}>
                 {getTodos().map(todo => 
@@ -116,6 +145,11 @@ function App() {
                 )}
               </div>
             }
+
+            <label htmlFor="">Add task: </label>
+            <input type="text" onChange={e => setNewItem(e.target.value)} value={newItem}/>
+            <button onClick={addItem} disabled={!newItem}>Add Todo</button><br/>
+            
           </Col>
         </Row>
       </Container>
