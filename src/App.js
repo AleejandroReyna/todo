@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react'
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   const [loading, setLoading] = useState(true)
   const [todos, setTodos] = useState([])
-  const [showTodos, setShowTodos] = useState([])
   const [showGrid, setShowGrid] = useState(false)
   const [filter, setFilter] = useState('pending')
+  const [filterText, setFilterText] = useState('')
   const [newItem, setNewItem] = useState('')
 
   useEffect(() => {
@@ -15,18 +14,10 @@ function App() {
         const response = await fetch('https://jsonplaceholder.typicode.com/todos', {method: 'get'})
         const result = await response.json()
         setTodos(result)
-        let pendingTodos = result.filter(todo => !todo.completed)
-        setShowTodos([...pendingTodos])
         setLoading(false)
       }
       getData()
   }, [loading])
-
-  function showFiltered(event) {
-    let filteredTodos = todos.filter(todo => todo.title.includes(event.target.value))
-    setShowTodos(filteredTodos)
-
-  }
 
   function getPending() {
     return todos.filter(todo => todo.completed == false)
@@ -34,6 +25,21 @@ function App() {
 
   function getCompleted() {
     return todos.filter(todo => todo.completed)
+  }
+
+  function getTodos() {
+    let todoList
+    if(filter === 'pending') {
+      todoList = getPending()
+    } else if (filter === 'completed') {
+      todoList = getCompleted()
+    } else {
+      todoList = [...todos]
+    }
+    if(filterText) {
+      return todoList.filter(todo => todo.title.includes(filterText))
+    }
+    return todoList
   }
 
   function completeItem(item) {
@@ -65,35 +71,15 @@ function App() {
         <label htmlFor="">Show as Grid</label>
         <input type="checkbox" onChange={e => setShowGrid(e.target.checked)} />
         <br/>
-        <label htmlFor="">search</label>
-        <input type="text" onChange={showFiltered}/><br/>
+        <label htmlFor="">search: </label>
+        <input type="text" onChange={e => setFilterText(e.target.value)} value={filterText}/><br/>
         <label htmlFor="">Add task: </label>
         <input type="text" onChange={e => setNewItem(e.target.value)} value={newItem}/>
         <button onClick={addItem} disabled={!newItem}>Add Todo</button><br/>
         {!showGrid ?
           <ul>
-            {filter === 'pending' &&
-              getPending().map(todo =>
-                <li key={todo.id}>{ todo.id } - { todo.title }
-                    {!todo.completed &&
-                      <button onClick={e => completeItem(todo)}>Complete</button>
-                    }
-                    <button onClick={e => deleteItem(todo)}>Delete</button>
-                </li>
-              )
-            }
-            {filter === 'completed' &&
-              getCompleted().map(todo =>
-                <li key={todo.id}>{ todo.id } - { todo.title }
-                    {!todo.completed &&
-                      <button onClick={e => completeItem(todo)}>Complete</button>
-                    }
-                    <button onClick={e => deleteItem(todo)}>Delete</button>
-                </li>
-              )
-            }
-            {filter === 'all' &&
-              todos.map(todo =>
+            {
+              getTodos().map(todo =>
                 <li key={todo.id}>{ todo.id } - { todo.title }
                     {!todo.completed &&
                       <button onClick={e => completeItem(todo)}>Complete</button>
