@@ -20,37 +20,20 @@ function App() {
         setLoading(false)
       }
       getData()
-  }, [todos.length])
-
-  function resetShowTodos() {
-    if(filter == 'all') {
-      showAll()
-    } else if(filter == 'pending') {
-      showPending()
-    } else {
-      showCompleted()
-    }
-  }
-
-  function showPending() {
-    setShowTodos(todos.filter(todo => !todo.completed))
-    setFilter('pending')
-  }
-
-  function showAll() {
-    setShowTodos([...todos])
-    setFilter('all')
-  }
-
-  function showCompleted() {
-    setShowTodos(todos.filter(todo => todo.completed))
-    setFilter('completed')
-  }
+  }, [loading])
 
   function showFiltered(event) {
     let filteredTodos = todos.filter(todo => todo.title.includes(event.target.value))
     setShowTodos(filteredTodos)
 
+  }
+
+  function getPending() {
+    return todos.filter(todo => todo.completed == false)
+  }
+
+  function getCompleted() {
+    return todos.filter(todo => todo.completed)
   }
 
   function completeItem(item) {
@@ -61,23 +44,23 @@ function App() {
 
   function deleteItem(item) {
     let newTodos = [...todos]
-    delete newTodos[newTodos.indexOf(item)]
+    newTodos.splice(newTodos.indexOf(item), 1)
     setTodos([...newTodos])
   }
 
   function addItem() {
     let repTodos = [...todos]
-    setTodos([...todos, {id: todos.length, title: newItem, completed: false}])
+    repTodos.push({id: (todos[todos.length - 1].id + 1), title: newItem, completed: false})
+    setTodos([...repTodos])
     setNewItem('')
-    console.log(todos.length)
   }
 
   if(!loading) {
     return (
       <div>
-        <button type="button" onClick={showPending}>Pending</button>
-        <button type="button" onClick={showAll}>All</button>
-        <button type="button" onClick={showCompleted}>Completed</button>
+        <button type="button" onClick={() => setFilter('pending')} disabled={filter === 'pending'}>Pending</button>
+        <button type="button" onClick={() => setFilter('all')} disabled={filter === 'all'}>All</button>
+        <button type="button" onClick={() => setFilter('completed')} disabled={filter === 'completed'}>Completed</button>
         <br/>
         <label htmlFor="">Show as Grid</label>
         <input type="checkbox" onChange={e => setShowGrid(e.target.checked)} />
@@ -89,18 +72,40 @@ function App() {
         <button onClick={addItem} disabled={!newItem}>Add Todo</button><br/>
         {!showGrid ?
           <ul>
-            {showTodos.map(todo => 
-              <li key={todo.id}>{ todo.id } - { todo.title }
-                  {!todo.completed &&
-                    <button onClick={e => completeItem(todo)}>Complete</button>
-                  }
-                  <button onClick={e => deleteItem(todo)}>Delete</button>
-              </li>
-            )}
+            {filter === 'pending' &&
+              getPending().map(todo =>
+                <li key={todo.id}>{ todo.id } - { todo.title }
+                    {!todo.completed &&
+                      <button onClick={e => completeItem(todo)}>Complete</button>
+                    }
+                    <button onClick={e => deleteItem(todo)}>Delete</button>
+                </li>
+              )
+            }
+            {filter === 'completed' &&
+              getCompleted().map(todo =>
+                <li key={todo.id}>{ todo.id } - { todo.title }
+                    {!todo.completed &&
+                      <button onClick={e => completeItem(todo)}>Complete</button>
+                    }
+                    <button onClick={e => deleteItem(todo)}>Delete</button>
+                </li>
+              )
+            }
+            {filter === 'all' &&
+              todos.map(todo =>
+                <li key={todo.id}>{ todo.id } - { todo.title }
+                    {!todo.completed &&
+                      <button onClick={e => completeItem(todo)}>Complete</button>
+                    }
+                    <button onClick={e => deleteItem(todo)}>Delete</button>
+                </li>
+              )
+            }
           </ul>
         : 
           <div style={{display: 'flex'}}>
-            {showTodos.map(todo => 
+            {todos.map(todo => 
               <div key={todo.id}>{ todo.id } - { todo.title }</div>
             )}
           </div>
